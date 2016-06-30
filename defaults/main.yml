@@ -1,2 +1,27 @@
 ---
 working_dir: /home/stack
+
+provisioner.username: admin
+provisioner.password: password
+provisioner.tenant_name: admin
+provisioner.auth_url: 'http://10.0.1.10:5000/v2.0'
+
+provisioner.nodes.bmc.flavor_name: m1.medium
+provisioner.nodes.bmc.image_name: bmc-base
+provisioner.nodes.bmc.name: bmc
+
+provisioner.nodes.baremetal.flavor_name: m1.large
+provisioner.nodes.baremetal.image_name: ipxe-boot
+provisioner.nodes.baremetal.name: baremetal
+
+provisioner.key_name: key
+provisioner.network.network_list.private.name: private
+provisioner.nodes.baremetal.node_count: 2
+provisioner.network.network_list.public.name: public
+provisioner.network.network_list.provision.name: provision
+
+# QuintupleO-specific params ignored by virtual-baremetal.yaml
+provisioner.nodes.undercloud.name: undercloud
+provisioner.nodes.undercloud.image_name: undercloud.qcow2
+provisioner.nodes.undercloud.flavor_name: m1.xlarge
+provisioner.network.external_net_name: external
