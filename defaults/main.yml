@@ -1,5 +1,16 @@
 ---
 working_dir: /home/stack
+local_working_dir: "{{ lookup('env', 'HOME') }}/.quickstart"
+release: mitaka
+undercloud_image_url: "http://artifacts.ci.centos.org/rdo/images/{{ release }}/delorean/stable/undercloud.qcow2"
+
+node:
+    prefix:
+        - "{{ 1000 |random }}"
+        - "{{ lookup('env', 'USER') }}"
+        - "{{ lookup('env', 'BUILD_NUMBER') }}"
+tmp:
+    node_prefix: '{{ node.prefix | reject("none") | join("-") }}-'
 
 provisioner.username: admin
 provisioner.password: password
@@ -25,3 +36,15 @@ provisioner.nodes.undercloud.name: undercloud
 provisioner.nodes.undercloud.image_name: undercloud.qcow2
 provisioner.nodes.undercloud.flavor_name: m1.xlarge
 provisioner.network.external_net_name: external
+
+provisioner.stack_name: stack
+provisioner.heat_template: /templates/quintupleo.yaml
+provisioner.environment_files: "['/templates/resource-registry.yaml', 'env.yaml']"
+provisioner.node_groups: "undercloud"
+provisioner.key_file:  '{{ local_working_dir }}/id_rsa_undercloud'
+provisioner.ssh_extra_args: '-F "{{ local_working_dir }}/ssh.config.local.ansible"'
+
+provisioner.interface.mtu: 1350
+provisioner.interface.names:
+  - eth1
+  - eth2

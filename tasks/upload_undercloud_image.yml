@@ -1,2 +1,28 @@
-# Tasks to be added:
-#  - upload latest undercloud.qcow2 image with unique name
+---
+name: get the latest undercloud.qcow2 image
+get-url:
+  url: {{ undercloud_image_url }}
+  dest: {{ local_working_dir }}/{{ tmp.node_prefix }}undercloud.qcow2
+
+
+name: upload latest undercloud.qcow2 image with unique name
+glance:
+    auth_url: "{{ provisioner.auth_url }}"
+    username: "{{ provisioner.username }}"
+    tenant_name: "{{ provisioner.tenant_name }}"
+    password: "{{ provisioner.password }}"
+    name: "{{ tmp.node_prefix }}undercloud.qcow2"
+    file: "{{ local_working_dir }}/{{ tmp.node_prefix }}undercloud.qcow2"
+    format: qcow2
+    container_format: bare
+    is_public: true
+    state: present
+
+#shell: >
+#    export OS_AUTH_URL="{{ provisioner.auth_url }}";
+#    export OS_USERNAME="{{ provisioner.username }}";
+#    export OS_PASSWORD="{{ provisioner.password }}";
+#    export OS_TENANT_NAME="{{ provisioner.tenant_name }}";
+#    glance image-create --name {{ tmp.node_prefix }}undercloud.qcow2 \
+#    --disk-format qcow2 --container-format bare < {{ tmp.node_prefix }}undercloud.qcow2
+

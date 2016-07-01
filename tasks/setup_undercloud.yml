@@ -1,21 +1,15 @@
-- name: Copy instackenv.json to undercloud
-  copy:
-    src="{{ lookup('env','HOME') }}/nodes.json"
-    dest="/root/instackenv.json"
-
-- name: Set MTU values
-  shell: >
-    ip link set {{ item }} mtu 1350;
-    echo "MTU=1350" >> /etc/sysconfig/network-scripts/ifcfg-{{ item }}
-  with_items:
-    - 'eth1'
-    - 'eth2'
-
-- name: Copy keys to undercloud
+---
+- name: copy both public and private ssh keys to root directory
   copy:
       src: "{{ lookup('env','HOME') }}/.ssh/{{ item }}"
       dest: "/root/.ssh/{{ item }}"
       mode: 0600
   with_items:
       - id_rsa
-      - id_rsa.pubi
+      - id_rsa.pub
+
+- name: Set MTU values
+  shell: >
+      ip link set {{ item }} mtu {{ provisioner.interface.mtu }};
+      echo "MTU={{ provisioner.interface.mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-{{ item }}
+  with_items: "{{ provisioner.interface.names }}"
