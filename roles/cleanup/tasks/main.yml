@@ -1,0 +1,4 @@
+---
+- include: cleanup-stack.yml
+
+- include: cleanup-image.yml

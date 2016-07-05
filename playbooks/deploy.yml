@@ -1,0 +1,12 @@
+- name: deploy TripleO heat stack on existing OpenStack cloud
+  hosts: localhost
+  roles:
+    - { role: upload-undercloud-image }
+    - { role: deploy-stack }
+
+- name: setup undercloud
+  hosts: undercloud
+  vars:
+      ansible_ssh_user: root
+  roles:
+    - { role: setup-undercloud }

@@ -1,4 +1,0 @@
-- name: Cleanup heat stack
-  hosts: localhost
-  roles:
-    - { role: cleanup_stack }
