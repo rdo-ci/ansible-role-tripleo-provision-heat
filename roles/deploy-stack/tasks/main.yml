@@ -2,29 +2,38 @@
 - name: Copy deploy stack parameters template
   template:
       src: env.yaml.j2
-      dest: "{{ local_working_directory }}"
-      mode: 755
+      dest: "{{ local_working_dir }}/{{ prefix }}env.yaml"
+      mode: 0755
+
+- name: Add keypair
+  shell: >
+      export OS_USERNAME="{{ os_username }}";
+      export OS_PASSWORD="{{ os_password }}";
+      export OS_TENANT_NAME="{{ os_tenant_name }}";
+      export OS_AUTH_URL="{{ os_auth_url }}";
+      nova keypair-add --pub-key ~/.ssh/id_rsa.pub {{ prefix }}key
+  ignore_errors: true
 
 - name: Deploy stack
-  heat_stack:
-      stack_name: "{{ provisioner.stack_name }}"
+  os_stack:
+      name: "{{ stack_name }}"
       state: present
-      login_username: "{{ provisioner.username }}"
-      login_password: "{{ provisioner.password }}"
-      auth_url: "{{ provisioner.auth_url }}"
-      tenant_name: "{{ provisioner.tenant_name }}"
-      template: "{{ provisioner.heat_template }}"
-      environment_files: "{{ provisioner.environment_files }}"
+      login_username: "{{ os_username }}"
+      login_password: "{{ os_password }}"
+      auth_url: "{{ os_auth_url }}"
+      tenant_name: "{{ os_tenant_name }}"
+      template: "{{ heat_template }}"
+      environment: "{{ environment_files }}"
   register: stack_deployment
   ignore_errors: true
 
 - name: Show stack deployment information
   shell: >
-      export OS_USERNAME="{{ provisioner.username }}";
-      export OS_PASSWORD="{{ provisioner.password }}";
-      export OS_TENANT_NAME="{{ provisioner.tenant_name }}";
-      export OS_AUTH_URL="{{ provisioner.auth_url }}";
-      heat stack-show {{ provisioner.stack_name }}
+      export OS_USERNAME="{{ os_username }}";
+      export OS_PASSWORD="{{ os_password }}";
+      export OS_TENANT_NAME="{{ os_tenant_name }}";
+      export OS_AUTH_URL="{{ os_auth_url }}";
+      heat stack-show {{ stack_name }}
   when: stack_deployment.result is not defined
 
 - name: set fact for undercloud floating IP address
@@ -35,27 +44,28 @@
   add_host:
       name: undercloud
       hostname: "{{ undercloud_ip }}"
-      groups: "{{ provisioner.node_groups| join(',') }}"
+      groups: "{{ node_groups| join(',') }}"
       ansible_ssh_host: "{{ undercloud_ip }}"
       ansible_fqdn: undercloud
       ansible_ssh_user: stack
-      ansible_private_key_file: "{{ provisioner.key_file }}"
-      ansible_ssh_extra_args: "{{ provisioner.ssh_extra_args }}"
+      ansible_private_key_file: "{{ undercloud_key }}"
+      ansible_ssh_extra_args: "{{ ssh_extra_args }}"
       undercloud_ip: "{{ undercloud_ip }}"
 
 - name: Wait for provisioned host to become reachable
-  wait_for_ssh:
-      host: "{{ undercloud_ip }}"
-      user: root
-      key: "{{ provisioner.key_file }}"
-      delegate_to: localhost
+  command:
+      ssh -o BatchMode=yes root@{{ undercloud_ip }} true -i "{{ undercloud_key }}"
+  register: result
+  until: result|success
+  retries: 300
+  delay: 5
 
 - name: Build nodes.json file to be used as instackenv.json
   shell: >
-      export OS_USERNAME="{{ provisioner.username }}";
-      export OS_PASSWORD="{{ provisioner.password }}";
-      export OS_TENANT_NAME="{{ provisioner.tenant_name }}";
-      export OS_AUTH_URL="{{ provisioner.auth_url }}";
-      {{ local_working_dir }}/openstack-virtual-baremetal/bin/build-nodes-json --env {{ provisioner.environment_files }}
+      export OS_USERNAME="{{ os_username }}";
+      export OS_PASSWORD="{{ os_password }}";
+      export OS_TENANT_NAME="{{ os_tenant_name }}";
+      export OS_AUTH_URL="{{ os_auth_url }}";
+      {{ ovb_dir }}/bin/build-nodes-json --env {{ environment_files }}
   register: nodes_json
 

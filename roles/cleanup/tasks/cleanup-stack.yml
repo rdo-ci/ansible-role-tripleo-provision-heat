@@ -1,10 +1,10 @@
 - name: Remove stack
-  heat_stack:
-    stack_name: "{{ provisioner.stack_name }}"
+  os_stack:
+    stack_name: "{{ stack_name }}"
     state: absent
-    login_username: "{{ provisioner.username }}"
-    login_password: "{{ provisioner.password }}"
-    auth_url: "{{ provisioner.auth_url }}"
-    tenant_name: "{{ provisioner.tenant_name }}"
+    login_username: "{{ os_username }}"
+    login_password: "{{ os_password }}"
+    auth_url: "{{ os_auth_url }}"
+    tenant_name: "{{ os_tenant_name }}"
   ignore_errors: true
 

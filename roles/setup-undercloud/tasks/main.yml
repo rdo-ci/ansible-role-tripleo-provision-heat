@@ -1,5 +1,6 @@
 ---
 - name: copy both public and private ssh keys to root directory
+  become: yes
   copy:
       src: "{{ lookup('env','HOME') }}/.ssh/{{ item }}"
       dest: "/root/.ssh/{{ item }}"
@@ -8,8 +9,18 @@
       - id_rsa
       - id_rsa.pub
 
+    src="{{ local_working_dir }}/nodes.json"
+    dest="{{ working_dir }}/instackenv.json"
+
 - name: Set MTU values
+  become: yes
   shell: >
-      ip link set {{ item }} mtu {{ provisioner.interface.mtu }};
-      echo "MTU={{ provisioner.interface.mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-{{ item }}
-  with_items: "{{ provisioner.interface.names }}"
+      ip link set {{ item }} mtu {{ mtu }};
+      echo "MTU={{ mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-{{ item }}
+  with_items: "{{ mtu_interface }}"
+
+- name: add nameserver to resolv.conf
+  become: yes
+  lineinfile:
+    dest: /etc/resolv.conf
+    line: nameserver {{ pvt_nameserver }}
