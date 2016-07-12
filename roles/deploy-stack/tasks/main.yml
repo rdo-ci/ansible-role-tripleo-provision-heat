@@ -17,13 +17,14 @@
 - name: Deploy stack
   os_stack:
       name: "{{ stack_name }}"
+      auth:
+          username: "{{ os_username }}"
+          password: "{{ os_password }}"
+          project_name: "{{ os_tenant_name }}"
+          auth_url: "{{ os_auth_url }}"
       state: present
-      login_username: "{{ os_username }}"
-      login_password: "{{ os_password }}"
-      auth_url: "{{ os_auth_url }}"
-      tenant_name: "{{ os_tenant_name }}"
       template: "{{ heat_template }}"
-      environment: "{{ environment_files }}"
+      environment: "{{ environment }}"
   register: stack_deployment
   ignore_errors: true
 

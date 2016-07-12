@@ -32,7 +32,7 @@ templates_dir: "{{ local_working_dir }}/openstack-virtual-baremetal/templates"
 ovb_dir: "{{ local_working_dir }}/openstack-virtual-baremetal"
 heat_template: "{{ templates_dir }}/quintupleo.yaml"
 environment:
-    - "{{ templates_dir }}/resource-registry.yaml'
+    - "{{ templates_dir }}/resource-registry.yaml"
     - "{{ local_working_dir }}/{{ prefix }}env.yaml"
 
 bmc_flavor: m1.medium

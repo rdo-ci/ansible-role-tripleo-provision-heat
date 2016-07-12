@@ -1,10 +1,11 @@
 - name: Remove stack
   os_stack:
-    stack_name: "{{ stack_name }}"
-    state: absent
-    login_username: "{{ os_username }}"
-    login_password: "{{ os_password }}"
-    auth_url: "{{ os_auth_url }}"
-    tenant_name: "{{ os_tenant_name }}"
+      stack_name: "{{ stack_name }}"
+      auth:
+          username: "{{ os_username }}"
+          password: "{{ os_password }}"
+          project_name: "{{ os_tenant_name }}"
+          auth_url: "{{ os_auth_url }}"
+      state: absent
   ignore_errors: true
 
