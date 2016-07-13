@@ -35,6 +35,10 @@ environment:
     - "{{ templates_dir }}/resource-registry.yaml"
     - "{{ local_working_dir }}/{{ prefix }}env.yaml"
 
+get_latest_image: 'upload'
+existing_key_location: '{{ local_working_dir }}'
+remove_image_from_host_cloud: true
+
 bmc_flavor: m1.medium
 bmc_image: 'bmc-base'
 bmc_prefix: '{{ prefix }}bmc'

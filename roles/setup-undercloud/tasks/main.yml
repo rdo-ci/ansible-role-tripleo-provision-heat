@@ -25,4 +25,4 @@
   become: yes
   lineinfile:
     dest: /etc/resolv.conf
-    iline: nameserver {{ pvt_nameserver }}
+    line: nameserver {{ pvt_nameserver }}
