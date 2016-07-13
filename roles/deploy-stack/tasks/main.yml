@@ -55,7 +55,7 @@
 
 - name: Wait for provisioned host to become reachable
   command:
-      ssh -o BatchMode=yes root@{{ undercloud_ip }} true -i "{{ undercloud_key }}"
+      ssh -o BatchMode=yes root@{{ undercloud_ip }} -i "{{ undercloud_key }}"
   register: result
   until: result|success
   retries: 300
