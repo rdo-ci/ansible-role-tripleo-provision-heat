@@ -16,7 +16,7 @@
           export OS_USERNAME="{{ os_username }}";
           export OS_PASSWORD="{{ os_password }}";
           export OS_TENANT_NAME="{{ os_tenant_name }}";
-          glance image-list --sort-key 'created_at' | grep 'undercloud.qcow2' | head -n1 | cut -d'|' -f3 | sed 's/ //g'
+          glance image-list --sort-key 'created_at' | grep "{{ release }}-undercloud.qcow2" | head -n1 | cut -d'|' -f3 | sed 's/ //g'
       register: latest_undercloud_image_name
 
     - name: set fact for undercloud image
@@ -75,8 +75,8 @@
         export OS_USERNAME="{{ os_username }}";
         export OS_PASSWORD="{{ os_password }}";
         export OS_TENANT_NAME="{{ os_tenant_name }}";
-        glance image-create --name {{ prefix }}undercloud.qcow2 \
+        glance image-create --name {{ prefix }}{{ release }}-undercloud.qcow2 \
         --disk-format qcow2 --container-format bare < {{ local_working_dir }}/{{ prefix }}undercloud.qcow2
 
     - name: set fact for undercloud image
-      set_fact: latest_undercloud_image="{{ prefix }}undercloud.qcow2"
+      set_fact: latest_undercloud_image="{{ prefix }}{{ release }}-undercloud.qcow2"
