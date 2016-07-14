@@ -77,3 +77,6 @@
         export OS_TENANT_NAME="{{ os_tenant_name }}";
         glance image-create --name {{ prefix }}undercloud.qcow2 \
         --disk-format qcow2 --container-format bare < {{ local_working_dir }}/{{ prefix }}undercloud.qcow2
+
+    - name: set fact for undercloud image
+      set_fact: latest_undercloud_image="{{ prefix }}undercloud.qcow2"
