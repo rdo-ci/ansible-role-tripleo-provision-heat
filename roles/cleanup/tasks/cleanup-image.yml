@@ -14,5 +14,5 @@
     export OS_USERNAME="{{ os_username }}";
     export OS_PASSWORD="{{ os_password }}";
     export OS_TENANT_NAME="{{ os_tenant_name }}";
-    glance image-delete {{ undercloud_image_id }}
+    glance image-delete {{ undercloud_image_id.stdout }}
 
