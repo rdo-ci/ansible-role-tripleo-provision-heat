@@ -5,7 +5,7 @@
     export OS_USERNAME="{{ os_username }}";
     export OS_PASSWORD="{{ os_password }}";
     export OS_TENANT_NAME="{{ os_tenant_name }}";
-    glance image-list | grep {{ prefix }}undercloud.qcow2 | cut -d'|' -f2
+    glance image-list | grep {{ prefix }}{{ release }}-undercloud.qcow2 | cut -d'|' -f2
   register: undercloud_image_id
 
 - name: remove undercloud.qcow2 image with unique name
